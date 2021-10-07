@@ -81,6 +81,7 @@ public class RecuentoToken extends javax.swing.JDialog {
         TableRecuento = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Recuento Tokens");
 
         jLabel1.setText("Recuento de Tokens");
 

@@ -130,6 +130,7 @@ public class PantallaInicial extends javax.swing.JFrame {
         ButtonGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Analizador Lexico");
         setLocation(new java.awt.Point(50, 50));
 
         ButtonBuscar.setText("Buscar");
@@ -414,13 +415,16 @@ public class PantallaInicial extends javax.swing.JFrame {
         // TODO add your handling code here:
         buscador.showSaveDialog(this);
         File archivo = buscador.getSelectedFile();
-        if (archivo.exists()) {
-            int option=JOptionPane.showConfirmDialog(this, "Desea sobreEscribir el archivo", "Archivo Duplicado", YES_NO_OPTION);
-            if (option==0) {
+        try {
+            if (archivo.exists()) {
+                int option = JOptionPane.showConfirmDialog(this, "Desea sobreEscribir el archivo", "Archivo Duplicado", YES_NO_OPTION);
+                if (option == 0) {
+                    GuardarArchivo(archivo);
+                }
+            } else {
                 GuardarArchivo(archivo);
             }
-        }else{
-            GuardarArchivo(archivo);
+        } catch (Exception e) {
         }
         
         

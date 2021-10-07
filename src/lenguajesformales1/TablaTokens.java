@@ -44,6 +44,7 @@ public class TablaTokens extends javax.swing.JDialog {
         TableReport = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Informacion Tokens");
 
         jLabel1.setText("Tokens");
 
