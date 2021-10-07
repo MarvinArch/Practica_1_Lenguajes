@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
@@ -37,6 +40,7 @@ public class PantallaInicial extends javax.swing.JFrame {
     creartoken token;
     boolean errores=true;
     AnalizarToken a1;
+    JFileChooser buscador = new JFileChooser();
     /**
      * Creates new form PnatallaInicial
      */
@@ -48,6 +52,8 @@ public class PantallaInicial extends javax.swing.JFrame {
         jScrollPane1.setRowHeaderView(numeros);
         ButtonInforme.setEnabled(false);
         ButtonRecuento.setEnabled(false);
+        ButtonLimpiar.setEnabled(false);
+        ButtonGuardar.setEnabled(false);
     }
     public void CrearAnalizarToken(){
         a1 = new AnalizarToken();
@@ -66,16 +72,34 @@ public class PantallaInicial extends javax.swing.JFrame {
         ButtonRecuento.setEnabled(false);
         for (int j = 0; j < a1.getResultados().size(); j++) {
             if (a1.getResultados().get(j).getIdentificador().equalsIgnoreCase("Error")) {
+                TextAreaErrores.append("\n\n");
                 TextAreaErrores.append("Error en linea No. "+a1.getResultados().get(j).getLinea());
                 TextAreaErrores.append(" columna No."+a1.getResultados().get(j).getColumna()+" ");
                 TextAreaErrores.append(" ----> "+a1.getResultados().get(j).getToken()+"\n");
                 TextAreaErrores.append("Descripcion del error ");
-                TextAreaErrores.append(a1.getResultados().get(j).getDescripcion()+"\n\n");
+                TextAreaErrores.append(a1.getResultados().get(j).getDescripcion()+"\n");
                 errores=false;
             }
+            if (a1.getResultados().get(j).isRecuperado()==true) {
+                TextAreaErrores.append(a1.getResultados().get(j).mensajerecuperado());
+            }
+           
         }
     
     }
+     public void GuardarArchivo(File archivo){
+        try {
+            FileWriter guardado = new FileWriter(archivo);
+            guardado.write(AreaAnalizar.getText());
+            guardado.close();
+            JOptionPane.showMessageDialog(rootPane, "El archivo fue guardado con éxito");
+        } catch (Exception e) {
+        }
+        TextBuscador.setText(archivo.toString());
+        TextBuscador.setEnabled(false);
+        ButtonBuscar.setEnabled(false);
+        
+     }
     
 
     /**
@@ -102,6 +126,8 @@ public class PantallaInicial extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         ButtonInforme = new javax.swing.JButton();
         ButtonRecuento = new javax.swing.JButton();
+        ButtonLimpiar = new javax.swing.JButton();
+        ButtonGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocation(new java.awt.Point(50, 50));
@@ -126,6 +152,7 @@ public class PantallaInicial extends javax.swing.JFrame {
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
+        TextAreaErrores.setEditable(false);
         TextAreaErrores.setColumns(20);
         TextAreaErrores.setRows(5);
         jScrollPane2.setViewportView(TextAreaErrores);
@@ -169,6 +196,20 @@ public class PantallaInicial extends javax.swing.JFrame {
             }
         });
 
+        ButtonLimpiar.setText("Limpiar");
+        ButtonLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonLimpiarActionPerformed(evt);
+            }
+        });
+
+        ButtonGuardar.setText("Guardar Archivo");
+        ButtonGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonGuardarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -193,14 +234,17 @@ public class PantallaInicial extends javax.swing.JFrame {
                             .addComponent(TextBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(89, 89, 89)
-                        .addComponent(ButtonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ButtonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                            .addComponent(ButtonLimpiar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(66, 66, 66)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ButtonInforme, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ButtonRecuento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(ButtonAnalizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(ButtonAnalizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -219,7 +263,9 @@ public class PantallaInicial extends javax.swing.JFrame {
                 .addComponent(TextBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(ButtonBuscar)
-                .addGap(113, 113, 113)
+                .addGap(38, 38, 38)
+                .addComponent(ButtonLimpiar)
+                .addGap(50, 50, 50)
                 .addComponent(TextFieldPalabra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
@@ -227,6 +273,8 @@ public class PantallaInicial extends javax.swing.JFrame {
                 .addComponent(ButtonInforme)
                 .addGap(28, 28, 28)
                 .addComponent(ButtonRecuento)
+                .addGap(35, 35, 35)
+                .addComponent(ButtonGuardar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButtonAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28))
@@ -253,7 +301,7 @@ public class PantallaInicial extends javax.swing.JFrame {
 
     private void ButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonBuscarActionPerformed
         // TODO add your handling code here:
-        JFileChooser buscador = new JFileChooser();
+        
         FileNameExtensionFilter filtro=new FileNameExtensionFilter("txt","txt");
         buscador.setFileFilter(filtro);
         
@@ -261,8 +309,9 @@ public class PantallaInicial extends javax.swing.JFrame {
         if (select == JFileChooser.APPROVE_OPTION) {
             archivo = buscador.getSelectedFile();
             TextBuscador.setText(archivo.getAbsolutePath());
-            TextBuscador.disable();
+            TextBuscador.setEnabled(false);
             AreaAnalizar.setText("");
+            ButtonLimpiar.setEnabled(true);
             try{
                 String linea = null;
                 BufferedReader leerFichero = new BufferedReader (new FileReader(archivo.getAbsolutePath()));    
@@ -278,34 +327,38 @@ public class PantallaInicial extends javax.swing.JFrame {
             
             
         }
+        ButtonBuscar.setEnabled(false);
         
     }//GEN-LAST:event_ButtonBuscarActionPerformed
 
     private void ButtonAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonAnalizarActionPerformed
         // Enviar arreglo para analizar
-        
-        arreglo.clear();
-        TextAreaErrores.setText("");
-        if (AreaAnalizar.getText()!=null) {
-            int tamañoLineas = AreaAnalizar.getLineCount();
-            for (int i = 0; i < tamañoLineas; i++) {
-                try {
-                    int lineafin=AreaAnalizar.getLineEndOffset(i);
-                    int lineainicio = AreaAnalizar.getLineStartOffset(i);
-                    arreglo.add(AreaAnalizar.getText(lineainicio, (lineafin-lineainicio)));
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(PantallaInicial.class.getName()).log(Level.SEVERE, null, ex);
+        if (AreaAnalizar.getText()!="") {
+            arreglo.clear();
+            TextAreaErrores.setText("");
+            if (AreaAnalizar.getText()!=null) {
+                int tamañoLineas = AreaAnalizar.getLineCount();
+                for (int i = 0; i < tamañoLineas; i++) {
+                    try {
+                        int lineafin=AreaAnalizar.getLineEndOffset(i);
+                        int lineainicio = AreaAnalizar.getLineStartOffset(i);
+                        arreglo.add(AreaAnalizar.getText(lineainicio, (lineafin-lineainicio)));
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(PantallaInicial.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                 }
-                
-            }
             
+            }
+            CrearAnalizarToken();
+            ImprimirErrores();
+            if (errores==true && a1.getResultados().size()>0) {
+                ButtonInforme.setEnabled(true);
+                ButtonRecuento.setEnabled(true);
+                ButtonGuardar.setEnabled(true);
+            }
         }
-        CrearAnalizarToken();
-        ImprimirErrores();
-        if (errores==true) {
-            ButtonInforme.setEnabled(true);
-            ButtonRecuento.setEnabled(true);
-        }
+        
     }//GEN-LAST:event_ButtonAnalizarActionPerformed
 
     private void TextFieldPalabraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TextFieldPalabraMouseClicked
@@ -340,6 +393,39 @@ public class PantallaInicial extends javax.swing.JFrame {
         rec.setVisible(true);
         
     }//GEN-LAST:event_ButtonRecuentoActionPerformed
+
+    private void ButtonLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonLimpiarActionPerformed
+        // TODO add your handling code here:
+        String mens= "Para cargar un nuevo Archivo de texto se borrara todo el contenido actual ¿desea cotinuar?";
+        int option=JOptionPane.showConfirmDialog(this, mens, "Confirmar Borrado", YES_NO_OPTION);
+        if (option==0) {
+            TextBuscador.setText("Buscar Archivo...");
+            AreaAnalizar.setText("");
+            TextBuscador.setEnabled(true);
+            ButtonBuscar.setEnabled(false);
+            ButtonInforme.setEnabled(false);
+            ButtonGuardar.setEnabled(false);
+            ButtonRecuento.setEnabled(false);
+            ButtonBuscar.setEnabled(true);
+        }
+    }//GEN-LAST:event_ButtonLimpiarActionPerformed
+
+    private void ButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonGuardarActionPerformed
+        // TODO add your handling code here:
+        buscador.showSaveDialog(this);
+        File archivo = buscador.getSelectedFile();
+        if (archivo.exists()) {
+            int option=JOptionPane.showConfirmDialog(this, "Desea sobreEscribir el archivo", "Archivo Duplicado", YES_NO_OPTION);
+            if (option==0) {
+                GuardarArchivo(archivo);
+            }
+        }else{
+            GuardarArchivo(archivo);
+        }
+        
+        
+        
+    }//GEN-LAST:event_ButtonGuardarActionPerformed
     
     public void buscarpalabra(JTextArea area1, String texto) {
         if (texto.length() >= 1) {
@@ -366,7 +452,9 @@ public class PantallaInicial extends javax.swing.JFrame {
     private javax.swing.JTextArea AreaAnalizar;
     private javax.swing.JButton ButtonAnalizar;
     private javax.swing.JButton ButtonBuscar;
+    private javax.swing.JButton ButtonGuardar;
     private javax.swing.JButton ButtonInforme;
+    private javax.swing.JButton ButtonLimpiar;
     private javax.swing.JButton ButtonRecuento;
     private javax.swing.JTextArea TextAreaErrores;
     private javax.swing.JTextField TextBuscador;

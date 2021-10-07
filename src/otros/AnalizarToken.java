@@ -46,7 +46,6 @@ public class AnalizarToken {
                 case 0: //Inicio
                     if (valor==2) {
                         Estado=1;
-                        isString=true;
                     }else if (valor==1) {
                         Estado=2;
                     }else if (valor==3 && i==0 ) {
@@ -66,7 +65,12 @@ public class AnalizarToken {
                     if (valor==2 || valor==100) {
                         Estado=1;
                     }else if (valor==1) {
-                        Estado=2;
+                        Estado=1;
+                    }else if (valor==3) {
+                        Error(linea, columna, 2, inicia, i+1, analizar);
+                        inicia=i+1;
+                        Estado=0;
+                        isString=false;
                     }else{
                         Error(linea, columna, 4, inicia, i+1, analizar);
                         inicia=i+1;
@@ -77,20 +81,13 @@ public class AnalizarToken {
                 case 2://numero
                     if (valor==1 || valor==100) {
                         Estado=2;
-                    }else if (valor==2 && isString==true) {
-                        Estado=1;
-                    }else if (valor==2 && isString==false){
+                    }else if (valor==2){
                         Estado=0;
                         Error(linea, columna, 1, inicia, i+1, analizar);
                         inicia=i+1;
                         isString=false;
-                    }else if (valor==3 && isString==false) {
+                    }else if (valor==3 && (analizar.length>(i+2))) {
                         Estado=3;
-                    }else if (valor==3 && isString==true) {
-                        Error(linea, columna, 1, inicia, i+1, analizar);
-                        inicia=i+1;
-                        Estado=0;
-                        isString=false;
                     }else{
                         Error(linea, columna, 1, inicia, i+1, analizar);
                         inicia=i+1;
@@ -177,11 +174,11 @@ public class AnalizarToken {
         for (int i = inicia; i < b.length; i++) {
             token2[i-inicia]=b[i];
         }
-        if (estado==1 || estado==2 && isString==true) {
+        if (estado==1) {
             tipo="Identificador";
-        }else if (estado==2 && isString==false) {
+        }else if (estado==2 ) {
             tipo="Numero";
-        }else if (estado==3 && isString==false) {
+        }else if (estado==3 ) {
             tipo="Decimal";
         }else if (estado==4) {
             tipo="Puntuacion";
@@ -191,6 +188,9 @@ public class AnalizarToken {
             tipo="Agrupacion";
         }
         resultados.add(new infoToken(tipo, linea, columna-token2.length, "Aceptado", String.valueOf(token2).trim()));
+        if (inicia!=0 && estado!=0) {
+            resultados.get(resultados.size()-1).setRecuperado(true);
+        }
     }
-    
+        
 }

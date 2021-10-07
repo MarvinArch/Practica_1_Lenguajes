@@ -15,6 +15,7 @@ public class infoToken {
     private int columna;
     private String Descripcion;
     private String token;
+    private boolean recuperado =false;
     private int repeticiones=0;
 
     public infoToken(String identificador, int linea, int columna, String Descripcion, String token) {
@@ -76,6 +77,19 @@ public class infoToken {
     public void setRepeticiones(int repeticiones) {
         this.repeticiones = repeticiones;
     }
+
+    public boolean isRecuperado() {
+        return recuperado;
+    }
+
+    public void setRecuperado(boolean recuperado) {
+        this.recuperado = recuperado;
+    }
     
+    public String mensajerecuperado(){
+    String mensa="";
+    mensa="Luego del error se pudo recupera el token "+token;
+    return mensa;
+    }
     
 }
