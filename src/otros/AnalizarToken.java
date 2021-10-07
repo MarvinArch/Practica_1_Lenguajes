@@ -191,6 +191,9 @@ public class AnalizarToken {
         if (inicia!=0 && estado!=0) {
             resultados.get(resultados.size()-1).setRecuperado(true);
         }
+        if (estado==0) {
+            resultados.remove(resultados.size()-1);
+        }
     }
         
 }
