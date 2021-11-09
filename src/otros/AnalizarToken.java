@@ -29,13 +29,18 @@ public class AnalizarToken {
             columna=1;
             linea=linean;
         }
+        
         char [] analizar = token.toCharArray();
         int Estado=0;
         boolean isString=false;
         int valor=-1;
         int inicia=0;
         for (int i = 0; i < analizar.length; i++) {
-            valor=TipoCaracter(analizar[i]);
+            if (analizar[i]=='-' && Character.isDigit(analizar[i+1])) {
+                valor=1;
+            }else{
+                valor=TipoCaracter(analizar[i]);
+            }
             if (Estado>3 && Estado<7 && valor<100) {
                 Error(linea, columna, 3, inicia, i+1, analizar);
                     inicia=i+1;
@@ -48,9 +53,13 @@ public class AnalizarToken {
                         Estado=1;
                     }else if (valor==1) {
                         Estado=2;
-                    }else if (valor==3 && i==0 ) {
-                        Error(linea, columna, 2, inicia, i+2, analizar);
-                        inicia=i+1;
+                    }else if (valor==3 && (i==0 || i==1) ) {
+                        if (i>1 || Character.isSpaceChar(analizar[i+1])) {
+                            Estado=4;
+                        }else{
+                            Error(linea, columna, 2, inicia, i+2, analizar);
+                            inicia=i+1;
+                        }
                     }else if (valor==4) {
                         Estado=4;
                     }else if (valor==5) {
@@ -59,10 +68,12 @@ public class AnalizarToken {
                         Estado=6;
                     }else if (valor==100) {
                         Estado=0;
+                    }else if (valor==10) {
+                        Estado=10;
                     }
                     break;
                 case 1: // Letra
-                    if (valor==2 || valor==100) {
+                    if (valor==2 || valor==100 || (valor==5 && analizar[i]=='-')) {
                         Estado=1;
                     }else if (valor==1) {
                         Estado=1;
@@ -120,16 +131,19 @@ public class AnalizarToken {
     public int TipoCaracter(char a){
         int valor=0;
         if (Character.isDigit(a)) {
-                valor=1;
-            }else if (Character.isLetter(a)) {
-                valor=2;
-            }else if ('.'==a) {
-                valor=3;
-            }else if (Character.isSpaceChar(a)) {
-                valor=100;
-            }else {
-                valor=OtrosCaracteres(a);
-            }
+            valor=1;
+        }else if (Character.isLetter(a)) {
+            valor=2;
+        }else if ('.'==a) {
+            valor=3;
+        }else if (Character.isSpaceChar(a)) {
+            valor=100;
+        }else if (a=='"' || a=='\'') {
+            valor=10;
+        } else {
+            valor=OtrosCaracteres(a);
+        }
+        
         return  valor;
     }
     
@@ -147,6 +161,10 @@ public class AnalizarToken {
                 resultado=6;
             }
         }
+        if (a=='_') {
+            resultado=2;
+        }
+        
         return resultado;
     }
     
@@ -181,11 +199,13 @@ public class AnalizarToken {
         }else if (estado==3 ) {
             tipo="Decimal";
         }else if (estado==4) {
-            tipo="Puntuacion";
+            tipo="Literal";
         }else if (estado==5) {
             tipo="Operado";
         }else if (estado==6) {
-            tipo="Agrupacion";
+            tipo="Literal";
+        }else if (estado==10){
+            tipo="Comillas";
         }
         resultados.add(new infoToken(tipo, linea, columna-token2.length, "Aceptado", String.valueOf(token2).trim()));
         if (inicia!=0 && estado!=0) {

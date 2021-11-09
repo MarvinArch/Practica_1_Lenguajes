@@ -24,6 +24,13 @@ public class infoToken {
         this.columna = columna;
         this.Descripcion = Descripcion;
         this.token = token;
+        if (token.equalsIgnoreCase("tabulac")) {
+            this.identificador="Especiales";
+            this.token="tabulacion";
+        }else if (token.equalsIgnoreCase("Epsilon")) {
+            this.identificador="Especiales";
+            this.token="Epsilon";
+        }
     }
 
     
