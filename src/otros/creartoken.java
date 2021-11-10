@@ -39,7 +39,8 @@ public class creartoken {
                 break;
             }
             
-            if (arreglo[i]==')' || arreglo[i]=='>' || arreglo[i]=='}'|| arreglo[i]==';' || arreglo[i]==':' || arreglo[i]==',' || arreglo[i]=='/' || arreglo[i]=='*' || arreglo[i]=='+') {
+            if (arreglo[i]==')' || arreglo[i]=='>' || arreglo[i]=='}'|| arreglo[i]==';' || arreglo[i]==':' || arreglo[i]==',' || arreglo[i]=='/' 
+                    || arreglo[i]=='*' || arreglo[i]=='+' ||  arreglo[i]=='(' || arreglo[i]=='<' || arreglo[i]=='{' || arreglo[i]=='=' || arreglo[i]=='\'') {
                 char[] conjunto;
                 if (i<(arreglo.length)) {
                     conjunto= new char[i-inicio];
@@ -53,14 +54,17 @@ public class creartoken {
                 devolucion.add(palabra.trim());
                 devolucion.add(String.valueOf(arreglo[i]));
                 inicio=i+1;
-            }else if (arreglo[i]==sep ||  arreglo[i]=='(' || arreglo[i]=='<' || arreglo[i]=='{' || i==(arreglo.length-1)) {
+            }else if (arreglo[i]==sep ||  arreglo[i]=='\n' ||  arreglo[i]=='(' || arreglo[i]=='<' || arreglo[i]=='{' || i==(arreglo.length-1)) {
                 char[] conjunto= new char[i-inicio+1];
                 for (int j = 0; j < conjunto.length; j++) {
                     conjunto[j]=arreglo[inicio+j];
                 }
                 inicio=i+1;
                 palabra=String.valueOf(conjunto);
-                devolucion.add(palabra);
+                devolucion.add(palabra.trim());
+                if (arreglo[i]=='\n') {
+                    devolucion.add("newLine");
+                }
                 if (Character.isSpaceChar(arreglo[i])) {
                     devolucion.add("Epsilon");
                 }

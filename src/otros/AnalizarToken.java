@@ -29,7 +29,9 @@ public class AnalizarToken {
             columna=1;
             linea=linean;
         }
-        
+        if (token.trim().equalsIgnoreCase("FIN")) {
+            resultados.add(new infoToken("Reservado", linea, columna, "Aceptado", String.valueOf(token).toLowerCase().trim()));     
+        }else{
         char [] analizar = token.toCharArray();
         int Estado=0;
         boolean isString=false;
@@ -93,10 +95,8 @@ public class AnalizarToken {
                     if (valor==1 || valor==100) {
                         Estado=2;
                     }else if (valor==2){
-                        Estado=0;
-                        Error(linea, columna, 1, inicia, i+1, analizar);
-                        inicia=i+1;
-                        isString=false;
+                        Estado=7;
+                       
                     }else if (valor==3 && (analizar.length>(i+2))) {
                         Estado=3;
                     }else{
@@ -116,12 +116,16 @@ public class AnalizarToken {
                         isString=false;
                     }
                     break;
-               
+               case 7: //numero seguid de letras
+                    if (valor==2 || valor==100 || (valor==5 && analizar[i]=='-')) {
+                        Estado=3;
+                    }
+                    break;
             }
             columna++;
         }
         aceptado(linea, columna, inicia, analizar, isString, Estado);
-        
+        }
     }
 
     public ArrayList<infoToken> getResultados() {
@@ -150,7 +154,7 @@ public class AnalizarToken {
     public int OtrosCaracteres(char a){
         int resultado=-1;
         char[] puntuacion={'.', ',',';',':'};
-        char[] aritmeticos={'+', '-', '*', '/', '%'};
+        char[] aritmeticos={'+', '-', '*', '/', '='};
         char[] agrupacion={'(', ')', '[', ']', '{', '}'};
         for (int i = 0; i < agrupacion.length; i++) {
             if (i<4 && a==puntuacion[i]) {

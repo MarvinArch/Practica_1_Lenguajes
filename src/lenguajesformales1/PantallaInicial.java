@@ -26,6 +26,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import otros.AnalizarToken;
 import otros.NumerarLineas;
+import otros.PilaAnalisis;
 import otros.creartoken;
 
 /**
@@ -39,8 +40,9 @@ public class PantallaInicial extends javax.swing.JFrame {
     ArrayList<String> arreglo= new ArrayList<>();
     creartoken token;
     boolean errores=true;
-    AnalizarToken a1;
+    static AnalizarToken a1;
     JFileChooser buscador = new JFileChooser();
+    PilaAnalisis a10;
     /**
      * Creates new form PnatallaInicial
      */
@@ -100,8 +102,9 @@ public class PantallaInicial extends javax.swing.JFrame {
         ButtonBuscar.setEnabled(false);
         
      }
+     
     
-
+    private static String mensaje;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -413,7 +416,7 @@ public class PantallaInicial extends javax.swing.JFrame {
 
     private void ButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonGuardarActionPerformed
         // TODO add your handling code here:
-        buscador.showSaveDialog(this);
+        /*buscador.showSaveDialog(this);
         File archivo = buscador.getSelectedFile();
         try {
             if (archivo.exists()) {
@@ -425,8 +428,23 @@ public class PantallaInicial extends javax.swing.JFrame {
                 GuardarArchivo(archivo);
             }
         } catch (Exception e) {
+        }*/
+        a10= new PilaAnalisis();
+        for (int i = 0; i < a1.getResultados().size(); i++) {
+            int valor=-50;
+            if (a1.getResultados().get(i).getIdentificador().equalsIgnoreCase("identificador") || a1.getResultados().get(i).getIdentificador().equalsIgnoreCase("numero")
+                    || a1.getResultados().get(i).getIdentificador().equalsIgnoreCase("decimal") || a1.getResultados().get(i).getIdentificador().equalsIgnoreCase("valor")) {
+                valor=a10.analisisPila(a1.getResultados().get(i).getIdentificador(),i);
+            }else if(a1.getResultados().get(i).getIdentificador().equalsIgnoreCase("especiales")){
+            }else{
+                valor=a10.analisisPila(a1.getResultados().get(i).getToken(),i);
+            }
+            if (valor==-1) {
+                TextAreaErrores.setText("Error sintactico encontrado en la linea No." +a1.getResultados().get(i).getLinea());
+            }else if (valor==0) {
+                System.out.println("yea aprobado");
+            }
         }
-        
         
         
     }//GEN-LAST:event_ButtonGuardarActionPerformed
@@ -449,6 +467,7 @@ public class PantallaInicial extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(area1, "la palabra a buscar no puede ser vacia");
         }
+        
     }
     
 

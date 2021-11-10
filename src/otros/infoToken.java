@@ -30,6 +30,9 @@ public class infoToken {
         }else if (token.equalsIgnoreCase("Epsilon")) {
             this.identificador="Especiales";
             this.token="Epsilon";
+        }else if (token.equalsIgnoreCase("newline")) {
+            this.identificador="Especiales";
+            this.token="NewLine";
         }
     }
 
